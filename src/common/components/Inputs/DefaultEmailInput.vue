@@ -1,9 +1,26 @@
 <script lang="ts">
 import type { StateManager } from '@/common/helpers/StateManager'
-import { defineComponent, ref, type InputTypeHTMLAttribute, type PropType } from 'vue'
+import {
+  computed,
+  defineComponent,
+  ref,
+  watch,
+  type InputTypeHTMLAttribute,
+  type PropType,
+} from 'vue'
 import * as Yup from 'yup'
 
 type T = Record<string, any>
+
+interface IEmailInputProps {
+  label?: string
+  placeholder: string
+  field: keyof T
+  store: StateManager<T>
+  type: InputTypeHTMLAttribute
+  error?: Partial<Record<keyof T, string>>
+  required?: boolean
+}
 
 export default defineComponent({
   name: 'DefaultEmailInput',
@@ -24,29 +41,51 @@ export default defineComponent({
       type: Object as PropType<StateManager<T>>,
       required: true,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     type: {
       type: String as PropType<InputTypeHTMLAttribute>,
       default: 'text',
       required: false,
     },
+    error: {
+      type: Object as PropType<Partial<Record<keyof T, string>>>,
+      required: false,
+    },
   },
-  setup(props) {
-    const internalState = props.store.getState()
+  setup(props: IEmailInputProps) {
+    const { field, store, label, placeholder, required, type } = props
 
-    const internalFieldValue = internalState[props.field] || ''
+    const errorRef = computed(() => props.error && props.error[field])
 
-    const internalLabel = props.label
+    const internalState = store.getState()
 
-    const internalPlaceholder = props.placeholder
+    const internalLabel = label
+
+    const internalPlaceholder = placeholder
 
     const internalError = ref<string | null>(null)
 
+    const internalFieldValue = internalState[field] || ''
+
+    const internalType = type
+
     const handleValidateEmail = (value: string) => {
       try {
-        Yup.string()
-          .required('O e-mail é obrigatório.')
-          .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'E-mail inválido.')
-          .validateSync(value)
+        const schema = Yup.string().when([], {
+          is: () => required === true,
+          then: (schema) =>
+            schema
+              .required('O e-mail é obrigatório.')
+              .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'E-mail inválido.'),
+          otherwise: (schema) =>
+            schema.matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'E-mail inválido.'),
+        })
+
+        schema.validateSync(value)
+
         internalError.value = null
       } catch (err: any) {
         internalError.value = err.message
@@ -56,13 +95,32 @@ export default defineComponent({
     const handleChange = (event: Event) => {
       const newValue = (event.target as HTMLInputElement).value
 
-      props.store.setFieldValue(props.field, newValue)
+      store.setFieldValue(props.field, newValue)
 
       internalError.value = null
     }
 
+    watch(
+      errorRef,
+      (newError) => {
+        if (newError) {
+          internalError.value = newError
+        }
+      },
+      { immediate: true },
+    )
+
+    watch(internalError, () => {
+      if (internalError.value) {
+        props.store.addError(internalError.value)
+      } else {
+        props.store.clearErrors()
+      }
+    })
+
     return {
       internalFieldValue,
+      internalType,
       internalLabel,
       internalPlaceholder,
       handleChange,
@@ -74,20 +132,20 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col">
     <label>{{ internalLabel }}</label>
     <InputText
       v-model="internalFieldValue"
       @input="handleChange"
       :placeholder="internalPlaceholder"
       :label="internalLabel"
-      :type="type"
+      :type="internalType"
       :value="internalFieldValue"
       :invalid="internalError !== null"
       v-on:blur="handleValidateEmail(internalFieldValue)"
       v-bind="$attrs"
     />
-    <span v-if="internalError" class="text-red-500 text-xs">{{ internalError }}</span>
+    <span v-if="internalError" class="text-red-500 text-xs !mt-1">{{ internalError }}</span>
   </div>
 </template>
 

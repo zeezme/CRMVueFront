@@ -7,77 +7,79 @@ import api from '@/common/helpers/api'
 import toast from '@/common/helpers/toast'
 import { globalStore } from '@/common/config/globalStore'
 import * as Yup from 'yup'
+import { ref } from 'vue'
+import Validator from '@/common/helpers/yupValidator'
+import { useRouter } from 'vue-router'
 
-const errors = loginStore.getErrors()
+const errorRef = ref()
+
+const router = useRouter()
 
 const handleSubmitLogin = async () => {
-  const data = loginStore.getState()
+  const loginData = loginStore.getRawState()
 
-  const submit = async (data: any): Promise<any> => {
-    const formattedData = {
-      username: data.username.value,
-      password: data.password.value,
-    }
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().required('O usuário é obrigatório.'),
+    password: Yup.string().required('A senha é obrigatória.'),
+  })
 
-    const isValid = Yup.object()
-      .shape({
-        username: Yup.string().required('O usuário é obrigatório.'),
-        password: Yup.string().required('A senha é obrigatória.'),
-      })
-      .isValidSync(formattedData)
+  const validator = new Validator(loginData, validationSchema)
+  const { isValid, errors } = await validator.validate()
 
-    if (!isValid) {
-      loginStore.addError('O usuário ou senha é obrigatório.')
-      toast.show.error('O usuário ou senha é obrigatório.')
-      return
-    }
-
-    loading.start()
-
-    return await api({
-      endpoint: 'signin',
-      method: 'POST',
-      data: formattedData,
-    })
-  }
-
-  const response = await submit(data)
-
-  if (response === false || !response) {
-    // toast.show.error('Erro no login!')
-
-    loading.stop()
-
+  if (!isValid) {
+    errorRef.value = errors
     return
   }
 
-  globalStore.setFieldValue('token', response?.data.token)
+  loading.start()
 
-  globalStore.setFieldValue('permissions', response?.data.permissions)
+  try {
+    const response = await api({
+      endpoint: 'signin',
+      method: 'POST',
+      data: loginData,
+    })
 
-  globalStore.setFieldValue('username', response?.data.username)
+    globalStore.setFieldsValue({
+      token: response.data.token,
+      permissions: response.data.permissions,
+      username: response.data.username,
+    })
 
-  toast.show.success('Sucesso no login!')
+    toast.show.success('Sucesso no login!')
 
-  loading.stop()
+    router.push({ name: 'person' })
+  } catch (error) {
+    return
+  } finally {
+    loading.stop()
+  }
 }
 </script>
 
 <template>
   <main>
-    <Card
-      :pt="{
-        root: {
-          class: `${errors.length > 0 ? 'outline-2 outline outline-red-500 outline-offset-0' : ''}`,
-        },
-      }"
-    >
-      <template #title> <div class="text-center">Login</div> </template>
+    <Card>
+      <template #title>
+        <div class="text-center">Login</div>
+      </template>
       <template #content>
         <div class="flex flex-col gap-4">
-          <DefaultTextInput :store="loginStore" field="username" placeholder="Usuário" />
+          <DefaultTextInput
+            :store="loginStore"
+            field="username"
+            placeholder="Usuário"
+            :error="errorRef"
+            required
+          />
 
-          <DefaultPasswordInput :store="loginStore" field="password" placeholder="Senha" />
+          <DefaultPasswordInput
+            :store="loginStore"
+            field="password"
+            placeholder="Senha"
+            :error="errorRef"
+            required
+          />
 
           <Button fluid type="submit" @click="handleSubmitLogin" label="Entrar" />
         </div>

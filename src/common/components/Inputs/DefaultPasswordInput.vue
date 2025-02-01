@@ -1,17 +1,37 @@
 <script lang="ts">
 import type { StateManager } from '@/common/helpers/StateManager'
-import { defineComponent, ref, watch, type InputTypeHTMLAttribute, type PropType } from 'vue'
+import { defineComponent, ref, toRef, watch, type PropType } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { zxcvbn } from '@zxcvbn-ts/core'
-import { ProgressBar } from 'primevue'
+import { computed } from 'vue'
 
 type T = Record<string, any>
+
+interface IPasswordInputProps {
+  label?: string
+  placeholder?: string
+  field: keyof T
+  store: StateManager<T>
+  required?: boolean
+  error?: Partial<Record<keyof T, string>>
+  enableStrengthMeter?: boolean
+}
 
 export default defineComponent({
   name: 'DefaultPasswordInput',
   props: {
-    label: String,
-    placeholder: String,
+    label: {
+      type: String,
+      required: false,
+    },
+    placeholder: {
+      type: String,
+      required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     field: {
       type: String as PropType<keyof T>,
       required: true,
@@ -20,81 +40,133 @@ export default defineComponent({
       type: Object as PropType<StateManager<T>>,
       required: true,
     },
-    type: {
-      type: String as PropType<InputTypeHTMLAttribute>,
-      default: 'password',
+    error: {
+      type: Object as PropType<Partial<Record<keyof T, string>>>,
+      required: false,
+    },
+    enableStrengthMeter: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
   },
-  setup(props) {
-    const internalState = props.store.getState()
-    const passwordValue = ref(internalState[props.field] || '')
-    const passwordRef = ref(null)
-    const passwordStrength = ref('')
-    const passwordLevel = ref(0)
+  setup(props: IPasswordInputProps) {
+    const { field, store, label, required, enableStrengthMeter } = props
+
+    const errorRef = computed(() => props.error && props.error[field])
+
+    const internalState = store.getState()
+
+    const internalPasswordValue = ref(internalState[field] || '')
+
+    const internalPasswordRef = ref(null)
+
+    const internalPasswordStrength = ref('')
+
+    const internalPasswordLevel = ref(0)
+
     const isPasswordVisible = ref(false)
-    const popover = ref()
-    const error = ref()
-    const suggestions = ref()
-    const { width: passwordFieldWidth } = useElementSize(passwordRef)
+
+    const internalPopoverRef = ref()
+
+    const internalError = ref()
+
+    const internalOutsideError = ref()
+
+    const internalLabel = label
+
+    const internalSuggestions = ref()
+
+    const { width: internalPasswordFieldWidth } = useElementSize(internalPasswordRef)
 
     const handleValidatePassword = (value: string) => {
-      const result = zxcvbn(value)
+      if (required === true && value === '') {
+        internalError.value = 'A senha é obrigatória.'
 
-      passwordLevel.value = (result.score * 100) / 4
+        internalOutsideError.value = 'A senha é obrigatória.'
 
-      const strengthLabels = ['Terrível 😭', 'Fraca 😞', 'Média 😐', 'Forte 🚀', 'Muito Forte 🔥']
-
-      passwordStrength.value = strengthLabels[result.score]
-
-      if (result.feedback.suggestions) {
-        suggestions.value = result.feedback.suggestions
+        return
       }
 
-      if (result.feedback.warning) {
-        error.value = result.feedback.warning
-      } else {
-        error.value = null
+      if (enableStrengthMeter) {
+        const result = zxcvbn(value)
+
+        internalPasswordLevel.value = (result.score * 100) / 4
+
+        const strengthLabels = ['Terrível 😭', 'Fraca 😞', 'Média 😐', 'Forte 🚀', 'Muito Forte 🔥']
+
+        internalPasswordStrength.value = strengthLabels[result.score]
+
+        if (result.feedback.suggestions) {
+          internalSuggestions.value = result.feedback.suggestions
+        }
+
+        if (result.feedback.warning) {
+          internalError.value = result.feedback.warning
+          internalOutsideError.value = 'Senha inválida. '
+        } else {
+          internalError.value = null
+          internalOutsideError.value = null
+        }
       }
     }
 
     const handleChange = (event: Event) => {
-      error.value = null
+      internalError.value = null
+
+      internalOutsideError.value = null
 
       const newValue = (event.target as HTMLInputElement).value
 
-      popover.value.show(event)
+      store.setFieldValue(field, newValue)
 
-      passwordValue.value = newValue
+      if (enableStrengthMeter) {
+        internalPopoverRef.value.show(event)
+      }
+
+      internalPasswordValue.value = newValue
 
       handleValidatePassword(newValue)
-
-      props.store.setFieldValue(props.field, newValue)
     }
 
-    const togglePasswordVisibility = () => {
+    const handleTogglePasswordVisibility = () => {
       isPasswordVisible.value = !isPasswordVisible.value
     }
 
-    watch(error, () => {
-      if (error.value) {
-        props.store.addError(error.value)
+    watch(
+      errorRef,
+      (newError) => {
+        if (newError) {
+          internalOutsideError.value = newError
+          internalError.value = newError
+        }
+      },
+      { immediate: true },
+    )
+
+    watch(internalError, () => {
+      if (internalError.value) {
+        store.addError(internalError.value)
       } else {
-        props.store.clearErrors()
+        store.clearErrors()
       }
     })
 
     return {
-      passwordValue,
+      internalPasswordValue,
       handleChange,
-      popover,
-      passwordRef,
-      passwordFieldWidth,
-      passwordStrength,
-      passwordLevel,
+      internalPopoverRef,
+      internalPasswordRef,
+      internalPasswordFieldWidth,
+      internalPasswordStrength,
+      internalPasswordLevel,
+      internalSuggestions,
+      internalLabel,
+      internalError,
+      internalOutsideError,
       isPasswordVisible,
-      togglePasswordVisibility,
-      error,
-      suggestions,
+      handleTogglePasswordVisibility,
+      handleValidatePassword,
     }
   },
 })
@@ -103,17 +175,19 @@ export default defineComponent({
 <template>
   <div class="flex flex-col">
     <label>{{ label }}</label>
-    <div class="password-input-wrapper" ref="passwordRef">
+    <div class="password-input-wrapper" ref="internalPasswordRef">
       <InputText
-        v-model="passwordValue"
+        v-model="internalPasswordValue"
+        :value="internalPasswordValue"
         @input="handleChange"
         :placeholder="placeholder"
         :type="isPasswordVisible ? 'text' : 'password'"
-        :class="{ 'p-invalid': !!error }"
+        :class="{ 'p-invalid': !!internalError }"
+        v-on:blur="handleValidatePassword(internalPasswordValue)"
         v-bind="$attrs"
       />
 
-      <button type="button" @click="togglePasswordVisibility" class="password-toggle">
+      <button type="button" @click="handleTogglePasswordVisibility" class="password-toggle">
         <span v-if="isPasswordVisible" class="flex items-center justify-center">
           <i class="pi pi-eye-slash text-gray-500" />
         </span>
@@ -123,20 +197,26 @@ export default defineComponent({
       </button>
     </div>
 
-    <Popover ref="popover" :style="{ width: `${passwordFieldWidth}px` }">
+    <span v-if="internalError" class="text-red-500 text-xs !mt-1">{{ internalOutsideError }}</span>
+
+    <Popover
+      ref="internalPopoverRef"
+      v-if="enableStrengthMeter"
+      :style="{ width: `${internalPasswordFieldWidth}px` }"
+    >
       <ProgressBar
         style="margin: 8px 0 8px 0"
-        v-if="passwordValue && passwordValue !== ''"
-        :value="passwordLevel"
+        v-if="internalPasswordValue && internalPasswordValue !== ''"
+        :value="internalPasswordLevel"
       />
 
-      <div class="p-2 text-center">{{ passwordStrength }}</div>
+      <div class="p-2 text-center">{{ internalPasswordStrength }}</div>
 
-      <div v-if="suggestions.length > 0" class="p-2 text-blue-500 text-xs">
-        <div v-for="(suggestion, index) in suggestions" :key="index">{{ suggestion }}</div>
+      <div v-if="internalSuggestions.length > 0" class="p-2 text-blue-500 text-xs">
+        <div v-for="(suggestion, index) in internalSuggestions" :key="index">{{ suggestion }}</div>
       </div>
 
-      <div v-if="error" class="p-2 text-red-500 text-xs">{{ error }}</div>
+      <div v-if="internalError" class="p-2 text-red-500 text-xs">{{ internalError }}</div>
     </Popover>
   </div>
 </template>
