@@ -4,7 +4,7 @@ import 'primeicons/primeicons.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
-import Aura from '@primevue/themes/aura'
+import Material from '@primevue/themes/material'
 import { zxcvbnOptions } from '@zxcvbn-ts/core'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common'
@@ -18,7 +18,7 @@ const app = createApp(App)
 
 app.use(PrimeVue, {
   theme: {
-    preset: Aura,
+    preset: Material,
     options: {
       prefix: 'p',
       darkModeSelector: 'system',

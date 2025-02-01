@@ -11,6 +11,22 @@ interface ApiParams {
   useAuthToken?: boolean
 }
 
+/**
+ * Makes an HTTP request using Axios with the specified parameters.
+ *
+ * @param {string} endpoint - The API endpoint to send the request to.
+ * @param {'GET' | 'POST' | 'PUT' | 'DELETE'} [method='GET'] - The HTTP method to use.
+ * @param {object} [data={}] - The data to send with the request, applicable for methods like POST or PUT.
+ * @param {object} [params={}] - The URL parameters to include with the request.
+ * @param {object} [headers={}] - Custom headers to include with the request.
+ * @param {boolean} [useAuthToken=false] - Whether to include the Authorization token in the request headers.
+ *
+ * @returns {Promise<AxiosResponse<any>>} - Returns a promise that resolves to the Axios response.
+ *
+ * @throws Will throw an error if the global store is not initialized, the API URL is not defined,
+ * or if the request fails. Errors with a message in the response data will be shown as a toast notification.
+ */
+
 const api = async ({
   endpoint,
   method = 'GET',
@@ -18,7 +34,7 @@ const api = async ({
   params = {},
   headers = {},
   useAuthToken = false,
-}: ApiParams): Promise<AxiosResponse<any> | false> => {
+}: ApiParams): Promise<AxiosResponse<any>> => {
   if (globalStore === null) {
     throw new Error('Global store is not initialized')
   }
@@ -35,7 +51,7 @@ const api = async ({
     if (useAuthToken) {
       headers = {
         ...headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.value}`,
       }
     }
 
@@ -50,13 +66,15 @@ const api = async ({
     const response = await axios(config)
     return response
   } catch (error: any) {
-    if (error.response.data.message) {
+    if (error?.response?.data?.message) {
       toast.show.error(error.response.data.message)
+    } else {
+      toast.show.error(error)
     }
 
     console.error('API request failed:', error)
 
-    return false
+    throw error
   }
 }
 
