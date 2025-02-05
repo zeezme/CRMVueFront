@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, toRefs, unref } from 'vue'
+import { computed, toRefs, unref, type Ref } from 'vue'
 import api from './api'
 
 export type StateManagerOptions<T> = {
@@ -61,12 +61,16 @@ export class StateManager<T extends Record<string, unknown>> {
     })
   }
 
+  getStoreName() {
+    return this.storeName
+  }
+
   getInitialState() {
     return this.initialData
   }
 
-  getState() {
-    return toRefs(this.store.$state)
+  getState(): { [K in keyof T]: Ref<T[K]> } {
+    return toRefs(this.store.$state) as { [K in keyof T]: Ref<T[K]> }
   }
 
   getRawState() {
@@ -114,16 +118,6 @@ export class StateManager<T extends Record<string, unknown>> {
     this.store.clearErrors()
   }
 
-  /**
-   * Fetches data from a specified endpoint and loads it into the store.
-   *
-   * This method is meant to be used for loading initial data for a store.
-   *
-   * @param {string} endpoint - The API endpoint (index route) to fetch data from
-   *
-   * @throws {Error} If the data received from the API endpoint is in an invalid format
-   * @throws {Error} If there is an error while fetching the data
-   */
   async loadDataFromId(endpoint: string) {
     if (this.initialData !== undefined) {
       try {
@@ -143,6 +137,30 @@ export class StateManager<T extends Record<string, unknown>> {
           }, {} as Partial<T>)
 
         this.store.setState(filteredData)
+      } catch (error: any) {
+        const errorMessage = `Error fetching data: ${error.message}`
+        console.error(errorMessage)
+        this.store.addError(errorMessage)
+      }
+    }
+  }
+
+  async indexData({ endpoint, field }: { endpoint: string; field: string }) {
+    if (this.initialData !== undefined) {
+      try {
+        const { data: response } = await api({
+          endpoint,
+          method: 'GET',
+          useAuthToken: true,
+        })
+
+        if (response.data && Array.isArray(response.data)) {
+          this.store.setState({ [field]: response.data } as unknown as Partial<T>)
+        }
+
+        if (response.meta) {
+          this.store.setState({ meta: response.meta } as unknown as Partial<T>)
+        }
       } catch (error: any) {
         const errorMessage = `Error fetching data: ${error.message}`
         console.error(errorMessage)

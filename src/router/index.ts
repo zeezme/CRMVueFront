@@ -22,6 +22,8 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  if (to.path === '/login') return next()
+
   if (!to.meta.requiresAuth) return next()
 
   const { token } = globalStore.getState()

@@ -27,6 +27,7 @@ interface IPersonState {
   personList: IPerson[]
   person: IPerson
   errors: string[]
+  meta: object
   [key: string]: unknown
 }
 
@@ -34,6 +35,7 @@ const initialData: IPersonState = {
   personList: [],
   person: {},
   errors: [],
+  meta: {},
 }
 
 const personStore = new StateManager({

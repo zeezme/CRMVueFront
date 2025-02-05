@@ -1,5 +1,4 @@
 import * as Yup from 'yup'
-import { toRef } from 'vue'
 
 class Validator<T extends Yup.AnyObject> {
   private data: T

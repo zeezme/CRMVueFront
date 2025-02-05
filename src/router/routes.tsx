@@ -5,6 +5,9 @@ export const routes = [
   {
     path: '/',
     name: 'home',
+    label: 'Home',
+    showInMenu: true,
+    icon: 'pi pi-home',
     component: () => import('../views/login/LoginView.vue'),
     layout: DefaultLayout,
     meta: {
@@ -14,8 +17,11 @@ export const routes = [
   {
     path: '/login',
     name: 'login',
+    label: 'Login',
+    showInMenu: false,
+    icon: 'pi pi-home',
     component: () => import('../views/login/LoginView.vue'),
-    layout: AuthLayout,
+    layout: DefaultLayout,
     meta: {
       requiresAuth: true,
     },
@@ -23,6 +29,9 @@ export const routes = [
   {
     path: '/person',
     name: 'person',
+    label: 'Person',
+    showInMenu: true,
+    icon: 'pi pi-user',
     component: () => import('../views/person/PersonView.vue'),
     layout: AuthLayout,
     meta: {
