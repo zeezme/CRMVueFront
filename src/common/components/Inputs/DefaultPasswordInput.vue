@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { StateManager } from '@/common/helpers/StateManager'
+import type { StateManager } from '@/common/helpers/stateManager'
 import { defineComponent, ref, toRef, watch, type PropType } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { zxcvbn } from '@zxcvbn-ts/core'
@@ -182,7 +182,7 @@ export default defineComponent({
         @input="handleChange"
         :placeholder="placeholder"
         :type="isPasswordVisible ? 'text' : 'password'"
-        :class="{ 'p-invalid': !!internalError }"
+        :class="[{ 'p-invalid': !!internalError }, 'w-full']"
         v-on:blur="handleValidatePassword(internalPasswordValue)"
         v-bind="$attrs"
       />

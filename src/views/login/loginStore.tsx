@@ -1,4 +1,4 @@
-import { StateManager } from '@/common/helpers/StateManager'
+import { StateManager } from '@/common/helpers/stateManager'
 
 interface ILoginState {
   username: string

@@ -37,9 +37,9 @@ router.beforeEach(async (to, from, next) => {
   })
 
   if (!isJwtValid) {
-    globalStore.clearState()
+    globalStore.resetState()
 
-    return next('/login')
+    return next('/')
   }
 
   return next()

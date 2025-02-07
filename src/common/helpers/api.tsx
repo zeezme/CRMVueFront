@@ -9,6 +9,7 @@ interface ApiParams {
   params?: object
   headers?: object
   useAuthToken?: boolean
+  showErrorToast?: boolean
 }
 
 /**
@@ -20,6 +21,7 @@ interface ApiParams {
  * @param {object} [params={}] - The URL parameters to include with the request.
  * @param {object} [headers={}] - Custom headers to include with the request.
  * @param {boolean} [useAuthToken=false] - Whether to include the Authorization token in the request headers.
+ * @param {boolean} [showErrorToast=true] - Whether to show an error toast notification if the request fails.
  *
  * @returns {Promise<AxiosResponse<any>>} - Returns a promise that resolves to the Axios response.
  *
@@ -34,6 +36,7 @@ const api = async ({
   params = {},
   headers = {},
   useAuthToken = false,
+  showErrorToast = true,
 }: ApiParams): Promise<AxiosResponse<any>> => {
   if (globalStore === null) {
     throw new Error('Global store is not initialized')
@@ -66,10 +69,12 @@ const api = async ({
     const response = await axios(config)
     return response
   } catch (error: any) {
-    if (error?.response?.data?.message) {
-      toast.show.error(error.response.data.message)
-    } else {
-      toast.show.error(error)
+    if (showErrorToast) {
+      if (error?.response?.data?.message) {
+        toast.show.error(error.response.data.message)
+      } else {
+        toast.show.error(error)
+      }
     }
 
     console.error('API request failed:', error)

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { StateManager } from '@/common/helpers/StateManager'
+import { StateManager } from '@/common/helpers/stateManager'
 
 export interface IToast {
   id: string

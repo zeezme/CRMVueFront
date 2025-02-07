@@ -38,6 +38,7 @@ const handleSubmitLogin = async () => {
       endpoint: 'signin',
       method: 'POST',
       data: loginData,
+      showErrorToast: false,
     })
 
     globalStore.setFieldsValue({
@@ -48,8 +49,10 @@ const handleSubmitLogin = async () => {
 
     toast.show.success('Sucesso no login!')
 
-    router.push({ name: 'person' })
+    router.push({ name: 'home' })
   } catch (error) {
+    toast.show.error('Erro no login!')
+
     return
   } finally {
     loading.stop()
@@ -64,8 +67,12 @@ const handleSubmitLogin = async () => {
         <div class="text-center">Login</div>
       </template>
       <template #content>
-        <div class="flex flex-col gap-4">
+        <div
+          class="flex flex-col gap-4"
+          @keypress="(e) => e.key === 'Enter' && handleSubmitLogin()"
+        >
           <DefaultTextInput
+            forceFocus
             :store="loginStore"
             field="username"
             placeholder="Usuário"

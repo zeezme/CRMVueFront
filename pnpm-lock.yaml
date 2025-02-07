@@ -38,6 +38,9 @@ importers:
       axios:
         specifier: ^1.7.9
         version: 1.7.9
+      dottie:
+        specifier: ^2.0.6
+        version: 2.0.6
       oh-vue-icons:
         specifier: 1.0.0-rc3
         version: 1.0.0-rc3(vue@3.5.13(typescript@5.7.3))
@@ -87,6 +90,9 @@ importers:
       '@tsconfig/node22':
         specifier: ^22.0.0
         version: 22.0.0
+      '@types/dottie':
+        specifier: ^2.0.7
+        version: 2.0.7
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7
@@ -884,6 +890,9 @@ packages:
   '@tsconfig/node22@22.0.0':
     resolution: {integrity: sha512-twLQ77zevtxobBOD4ToAtVmuYrpeYUh3qh+TEp+08IWhpsrIflVHqQ1F1CiPxQGL7doCdBIOOCF+1Tm833faNg==}
 
+  '@types/dottie@2.0.7':
+    resolution: {integrity: sha512-OHBdZVYmvA90RvyvPFueALVI9B9CMyKLP0sCEWcx8teoUgJ7X/t3fAC/14tbzRC1ORtbfA4FS0MJi6zvOK5fGw==}
+
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
@@ -1384,6 +1393,9 @@ packages:
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
+
+  dottie@2.0.6:
+    resolution: {integrity: sha512-iGCHkfUc5kFekGiqhe8B/mdaurD+lakO9txNnTvKtA6PISrw86LgqHvRzWYPyoE2Ph5aMIrCw9/uko6XHTKCwA==}
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -3503,6 +3515,8 @@ snapshots:
 
   '@tsconfig/node22@22.0.0': {}
 
+  '@types/dottie@2.0.7': {}
+
   '@types/estree@1.0.6': {}
 
   '@types/jsdom@21.1.7':
@@ -4083,6 +4097,8 @@ snapshots:
   detect-libc@1.0.3: {}
 
   dotenv@16.4.7: {}
+
+  dottie@2.0.6: {}
 
   eastasianwidth@0.2.0: {}
 

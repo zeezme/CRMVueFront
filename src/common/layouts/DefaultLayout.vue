@@ -9,7 +9,7 @@ import ToastsProvider from '@/common/providers/ToastsProvider.vue'
     <ToastsProvider />
     <LoadingProvider />
     <main class="h-screen flex flex-row w-screen">
-      <div class="flex justify-center items-center h-screen w-full md:w-screen">
+      <div class="flex justify-center items-center h-screen w-full md:w-screen bg-gray-300">
         <RouterView />
       </div>
     </main>

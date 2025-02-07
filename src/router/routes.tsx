@@ -8,10 +8,22 @@ export const routes = [
     label: 'Home',
     showInMenu: true,
     icon: 'pi pi-home',
-    component: () => import('../views/login/LoginView.vue'),
-    layout: DefaultLayout,
+    component: () => import('../views/home/HomeView.vue'),
+    layout: AuthLayout,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/debug',
+    name: 'debug',
+    label: 'Debug',
+    showInMenu: false,
+    icon: 'pi pi-home',
+    component: () => import('../views/debug/DebugView.vue'),
+    layout: AuthLayout,
+    meta: {
+      requiresAuth: true,
     },
   },
   {
@@ -23,7 +35,7 @@ export const routes = [
     component: () => import('../views/login/LoginView.vue'),
     layout: DefaultLayout,
     meta: {
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {

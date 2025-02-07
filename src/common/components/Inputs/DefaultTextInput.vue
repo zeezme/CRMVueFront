@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { StateManager } from '@/common/helpers/StateManager'
+import type { StateManager } from '@/common/helpers/stateManager'
 import {
   computed,
   defineComponent,
+  onMounted,
   ref,
-  toRef,
   watch,
   type InputTypeHTMLAttribute,
   type PropType,
@@ -19,6 +19,7 @@ interface ITextInputProps {
   store: StateManager<T>
   type?: InputTypeHTMLAttribute
   required?: boolean
+  forceFocus?: boolean
   error?: Partial<Record<keyof T, string>>
 }
 
@@ -51,19 +52,24 @@ export default defineComponent({
       default: false,
       required: false,
     },
+    forceFocus: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
     error: {
       type: Object as PropType<Partial<Record<keyof T, string>>>,
       required: false,
     },
   },
   setup(props: ITextInputProps) {
-    const { field, store, label, placeholder, type, required } = props
+    const { field, store, label, placeholder, type, required, forceFocus } = props
 
     const errorRef = computed(() => props.error && props.error[field])
 
     const internalState = store.getState()
 
-    const internalLabelFieldValue = internalState[field]
+    const internalLabelFieldValue = ref(internalState[field] || '')
 
     const internalError = ref()
 
@@ -72,6 +78,14 @@ export default defineComponent({
     const internalLabelLabel = label
 
     const internalLabelPlaceholder = placeholder
+
+    const fieldRef = ref()
+
+    onMounted(() => {
+      if (forceFocus === true && fieldRef.value) {
+        fieldRef.value.$el.focus()
+      }
+    })
 
     const handleChange = (event: Event) => {
       internalError.value = null
@@ -82,7 +96,7 @@ export default defineComponent({
     }
 
     const handleValidate = (value: string) => {
-      if (required === true && value === '') {
+      if (required === true && (value === '' || value === undefined)) {
         internalError.value = `O ${label || placeholder || field} é obrigatório.`
       }
     }
@@ -113,6 +127,7 @@ export default defineComponent({
       internalError,
       handleChange,
       handleValidate,
+      fieldRef,
     }
   },
 })
@@ -130,6 +145,7 @@ export default defineComponent({
       :type="internalType"
       :value="internalLabelFieldValue"
       :class="{ 'p-invalid': !!internalError }"
+      :ref="fieldRef"
       v-on:blur="handleValidate(internalLabelFieldValue)"
       v-bind="$attrs"
     />

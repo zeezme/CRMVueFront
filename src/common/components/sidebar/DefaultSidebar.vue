@@ -1,7 +1,6 @@
 <script lang="ts">
 import { globalStore } from '@/common/config/globalStore'
 import { routes } from '@/router/routes'
-import Avatar from 'primevue/avatar'
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 
 export default defineComponent({
@@ -101,13 +100,14 @@ export default defineComponent({
     </template>
   </Card>
 
-  <div v-if="screenWidth < 550" class="absolute top-0 left-0 p-5">
-    <Button @click="isSidebarOpen = !isSidebarOpen"> Menu </Button>
+  <div v-if="screenWidth < 550 && !isSidebarOpen" class="absolute top-0 left-0 p-5 z-10">
+    <Button @click="isSidebarOpen = !isSidebarOpen" rounded icon="pi pi-bars" severity="contrast" />
   </div>
 </template>
 
 <style scoped>
 .sidebar {
+  position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
@@ -129,8 +129,12 @@ export default defineComponent({
 
 @media (max-width: 550px) {
   .sidebar-open {
-    width: 100vw;
     position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 100vw;
     height: 100vh;
   }
   .footer {

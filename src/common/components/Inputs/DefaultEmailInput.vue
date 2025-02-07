@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { StateManager } from '@/common/helpers/StateManager'
+import type { StateManager } from '@/common/helpers/stateManager'
 import {
   computed,
   defineComponent,
@@ -14,7 +14,7 @@ type T = Record<string, any>
 
 interface IEmailInputProps {
   label?: string
-  placeholder: string
+  placeholder?: string
   field: keyof T
   store: StateManager<T>
   type: InputTypeHTMLAttribute
@@ -68,7 +68,7 @@ export default defineComponent({
 
     const internalError = ref<string | null>(null)
 
-    const internalFieldValue = internalState[field] || ''
+    const internalFieldValue = ref(internalState[field] || '')
 
     const internalType = type
 

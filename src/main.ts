@@ -17,8 +17,11 @@ import { initializeGlobalStore } from './common/config/globalStore'
 
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
 import { HiSolidCursorClick } from 'oh-vue-icons/icons'
+import ConfirmationService from 'primevue/confirmationservice'
 
 const app = createApp(App)
+
+app.use(ConfirmationService)
 
 addIcons(HiSolidCursorClick)
 app.component('v-icon', OhVueIcon)
@@ -42,17 +45,20 @@ const Dark = definePreset(lara, {
       light: {
         surface: {
           0: '#ffffff',
-          50: '{zinc.50}',
-          100: '{zinc.100}',
-          200: '{zinc.200}',
-          300: '{zinc.300}',
-          400: '{zinc.400}',
-          500: '{zinc.500}',
-          600: '{zinc.600}',
-          700: '{zinc.700}',
-          800: '{zinc.800}',
-          900: '{zinc.900}',
-          950: '{zinc.950}',
+          50: '{slate.0}',
+          100: '{slate.50}',
+          200: '{slate.100}',
+          300: '{slate.200}',
+          400: '{slate.300}',
+          500: '{slate.400}',
+          600: '{slate.500}',
+          700: '{slate.600}',
+          800: '{slate.700}',
+          900: '{slate.800}',
+          950: '{slate.900}',
+        },
+        primary: {
+          background: '{slate.100}',
         },
       },
       dark: {
@@ -69,6 +75,9 @@ const Dark = definePreset(lara, {
           800: '{slate.700}',
           900: '{slate.800}',
           950: '{slate.900}',
+        },
+        primary: {
+          background: '{slate.100}',
         },
       },
     },

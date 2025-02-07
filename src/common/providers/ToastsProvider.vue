@@ -43,27 +43,25 @@ export default defineComponent({
 </script>
 
 <template>
-  <div style="position: fixed; top: 10px; right: 10px; z-index: 1050; width: 300px">
-    <div>
-      <TransitionGroup name="list" tag="div" class="flex flex-col gap-2" style="width: 300px">
-        <div
-          v-for="toast in toasts"
-          :key="toast.id"
-          class="rounded-sm shadow-sm py-1 cursor-pointer opacity-90 w-auto h-auto"
-          :class="{
-            'bg-green-500': toast.type === 'success',
-            'bg-red-500': toast.type === 'error',
-            'text-white': true,
-            'hover:bg-green-600': toast.type === 'success',
-            'hover:bg-red-600': toast.type === 'error',
-          }"
-          style="max-width: 280px"
-          @click="removeToast(toast.id)"
-        >
-          <p class="text-sm text-center">{{ toast.message }}</p>
-        </div>
-      </TransitionGroup>
-    </div>
+  <div style="position: fixed; top: 10px; right: 10px; z-index: 90000; width: 300px">
+    <TransitionGroup name="list" tag="div" class="flex flex-col gap-2">
+      <div
+        v-for="toast in toasts"
+        :key="toast.id"
+        class="rounded-sm shadow-sm p-2 cursor-pointer h-auto"
+        :class="{
+          'bg-green-500': toast.type === 'success',
+          'bg-red-500': toast.type === 'error',
+          'text-white': true,
+          'hover:bg-green-700': toast.type === 'success',
+          'hover:bg-red-700': toast.type === 'error',
+        }"
+        style="min-width: 280px"
+        @click="removeToast(toast.id)"
+      >
+        <p class="text-sm text-center">{{ toast.message }}</p>
+      </div>
+    </TransitionGroup>
   </div>
 </template>
 

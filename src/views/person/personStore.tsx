@@ -1,9 +1,9 @@
-import { StateManager } from '@/common/helpers/StateManager'
+import { StateManager } from '@/common/helpers/stateManager'
 
-interface IPerson {
-  id?: string
-  name?: string
-  email?: string
+export interface IPerson {
+  id: string
+  name: string
+  email: string
   phone?: string | null
   active?: boolean | null
   extension?: string | null
@@ -21,6 +21,7 @@ interface IPerson {
     id?: string
     username?: string
   }
+  fakePassword?: string
 }
 
 interface IPersonState {
@@ -33,7 +34,23 @@ interface IPersonState {
 
 const initialData: IPersonState = {
   personList: [],
-  person: {},
+  person: {
+    id: '',
+    name: '',
+    email: '',
+    phone: null,
+    active: null,
+    extension: null,
+    neighborhood: null,
+    complement: null,
+    address: null,
+    number: null,
+    city: null,
+    state: null,
+    type: 'user',
+    userId: '',
+    fakePassword: '',
+  },
   errors: [],
   meta: {},
 }

@@ -11,9 +11,9 @@ import DefaultSidebar from '@/common/components/sidebar/DefaultSidebar.vue'
     <LoadingProvider />
     <main class="h-screen flex flex-row w-screen">
       <DefaultSidebar />
-      <div
-        class="flex justify-center items-center h-screen w-full md:w-screen bg-gray-300 defaultContent"
-      >
+      <div class="fixed bg-gray-300 w-screen h-screen z-[-1]"></div>
+
+      <div class="flex justify-center items-center h-screen w-full p-15 defaultMargin">
         <RouterView />
       </div>
     </main>
@@ -21,9 +21,12 @@ import DefaultSidebar from '@/common/components/sidebar/DefaultSidebar.vue'
 </template>
 
 <style scoped>
-.defaultContent {
-  z-index: 1;
-  margin-left: -20px;
-  width: calc(100% + 20px);
+.defaultMargin {
+  margin-left: 70px !important;
+}
+@media (max-width: 550px) {
+  .defaultMargin {
+    margin-left: 0px !important;
+  }
 }
 </style>
