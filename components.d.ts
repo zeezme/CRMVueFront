@@ -26,5 +26,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SpeedDial: typeof import('primevue/speeddial')['default']
+    Tag: typeof import('primevue/tag')['default']
   }
 }

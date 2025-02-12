@@ -61,7 +61,7 @@
       </section>
 
       <!-- Formação Acadêmica -->
-      <section class="!mb-8">
+      <section class="!mb-8 w-full">
         <h2 class="text-2xl !font-bold text-gray-800 !mb-4">Formação Acadêmica</h2>
         <div class="!bg-gray-200 p-4 rounded-lg">
           <h3 class="text-xl !font-semibold text-gray-700">
@@ -72,7 +72,7 @@
       </section>
 
       <!-- Competências Técnicas -->
-      <section class="!mb-8">
+      <section class="!mb-8 w-full">
         <h2 class="text-2xl !font-bold text-gray-800 !mb-4">Competências Técnicas</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="!bg-gray-200 p-4 rounded-lg">
@@ -113,13 +113,13 @@
       </section>
 
       <!-- Experiências Profissionais -->
-      <section class="!mb-8">
+      <section class="!mb-8 w-full">
         <h2 class="text-2xl !font-bold text-gray-800 !mb-4">Experiências Profissionais</h2>
         <div class="space-y-6 flex flex-col !gap-4">
           <!-- Experiência 1 -->
           <div class="!bg-gray-200 p-4 rounded-lg">
             <h3 class="text-xl !font-semibold text-gray-700">Desenvolvedor Full Stack</h3>
-            <p class="text-gray-600">Cia Sistemas — nov 2023 – dez 2024</p>
+            <p class="text-gray-600">Cia Sistemas — nov 2023 - dez 2024</p>
             <ul class="list-disc list-inside text-gray-600 !mt-2">
               <li>
                 Desenvolvimento de aplicação full stack para automação de processos fiscais, como
@@ -142,7 +142,7 @@
           <!-- Experiência 2 -->
           <div class="!bg-gray-200 p-4 rounded-lg">
             <h3 class="text-xl !font-semibold text-gray-700">Desenvolvedor Full Stack</h3>
-            <p class="text-gray-600">Moderniza Group — out 2022 – jun 2023</p>
+            <p class="text-gray-600">Moderniza Group — out 2022 - jun 2023</p>
             <ul class="list-disc list-inside text-gray-600 !mt-2">
               <li>
                 Desenvolvimento de uma plataforma unificada para integração de sistemas internos,
@@ -158,7 +158,7 @@
           <!-- Experiência 3 -->
           <div class="!bg-gray-200 p-4 rounded-lg">
             <h3 class="text-xl !font-semibold text-gray-700">Estagiário de Desenvolvimento</h3>
-            <p class="text-gray-600">Central IT — nov 2021 – nov 2022</p>
+            <p class="text-gray-600">Central IT — nov 2021 - nov 2022</p>
             <ul class="list-disc list-inside text-gray-600 !mt-2">
               <li>Desenvolvimento e manutenção de plataforma de chatbots.</li>
               <li>
@@ -171,11 +171,11 @@
       </section>
 
       <!-- Projetos Freelancer -->
-      <section>
+      <section class="w-full">
         <h2 class="text-2xl !font-bold text-gray-800 !mb-4">Projetos Freelancer</h2>
         <div class="!bg-gray-200 p-4 rounded-lg">
           <h3 class="text-xl !font-semibold text-gray-700">Desenvolvedor Freelancer</h3>
-          <p class="text-gray-600">JumpVerso — jun 2024 – nov 2024</p>
+          <p class="text-gray-600">JumpVerso — jun 2024 - nov 2024</p>
           <ul class="list-disc list-inside text-gray-600 !mt-2">
             <li>
               Desenvolvimento de sistemas avançados de scraping com Python e Puppeteer voltados para

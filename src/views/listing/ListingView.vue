@@ -42,8 +42,6 @@ const personEntries = computed(() => {
     }))
 })
 
-console.log(personListEntries)
-
 const errorRef = ref()
 
 const insertPerson = async () => {
