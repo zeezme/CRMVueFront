@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 font-sans flex justify-center items-center">
+  <div class="!p-0 md:p-8 font-sans flex justify-center items-center">
     <!-- Container Principal -->
     <div
       class="max-w-4xl mx-auto !bg-white shadow-lg rounded-lg p-8 flex flex-col items-start justify-start !gap-4"
