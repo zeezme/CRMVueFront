@@ -61,7 +61,17 @@ const handleSubmitLogin = async () => {
 </script>
 
 <template>
-  <main class="flex items-center justify-center h-[90vh]">
+  <main class="flex items-center flex-col justify-center gap-4 h-[90vh]">
+    <Card>
+      <template #content>
+        <div class="flex flex-col">
+          <p class="text-center !font-semibold !mb-2">Que tal tentar:</p>
+
+          <p class="text-center">Usuário: portfolio</p>
+          <p class="text-center">Senha: Portfolio@123</p>
+        </div></template
+      >
+    </Card>
     <Card>
       <template #title>
         <div class="text-center">Login</div>
