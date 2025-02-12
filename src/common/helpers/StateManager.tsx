@@ -209,14 +209,14 @@ export class StateManager<T extends Record<string, unknown>> {
    * Returns the raw state of the store, with all reactive values (Refs) unwrapped.
    * @returns {Record<string, unknown>} The raw state.
    */
-  getRawState() {
+  getRawState(): { [K in keyof T]: T[K] } {
     const state = this.store.$state
     return Object.keys(state).reduce(
       (acc, key) => {
-        acc[key] = unref(state[key])
+        acc[key as keyof T] = unref(state[key as keyof T])
         return acc
       },
-      {} as Record<string, unknown>,
+      {} as { [K in keyof T]: T[K] },
     )
   }
 
@@ -298,16 +298,12 @@ export class StateManager<T extends Record<string, unknown>> {
           throw new Error('Invalid data format received')
         }
 
-        console.log(data)
-
         const filteredData = Object.keys(this.initialData)
           .filter((key) => key in data)
           .reduce((acc, key) => {
             acc[key as keyof T] = data[key]
             return acc
           }, {} as Partial<T>)
-
-        console.log(filteredData)
 
         this.updateStoreState(filteredData)
       } catch (error: any) {

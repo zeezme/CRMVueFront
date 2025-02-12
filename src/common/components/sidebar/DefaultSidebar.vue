@@ -1,6 +1,7 @@
 <script lang="ts">
 import { globalStore } from '@/common/config/globalStore'
-import { routes } from '@/router/routes'
+import router from '@/router'
+import { routes, type IDefaultRoutes } from '@/router/routes'
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 
 export default defineComponent({
@@ -11,11 +12,44 @@ export default defineComponent({
 
     const menuItens = routes.filter((route) => route.showInMenu)
 
+    const footerPopoverRef = ref()
+
+    const userMenuItems = ref([
+      {
+        label: 'Logout',
+        icon: 'pi pi-sign-out',
+        command: () => {
+          globalStore.clearState()
+
+          router.push({ name: 'login' })
+        },
+      },
+    ])
+
+    const menuItensByGroup = menuItens.reduce<Record<string, IDefaultRoutes[]>>((acc, item) => {
+      if (!item.group) {
+        item.group = 'Normal'
+      }
+      if (!acc[item.group]) {
+        acc[item.group] = []
+      }
+
+      acc[item.group].push(item)
+
+      return acc
+    }, {})
+
     const isSidebarOpen = ref(false)
 
     const hoveredItem = ref<string | null>(null)
 
     const screenWidth = ref(window.innerWidth)
+
+    const handleRedirect = (routeName: string) => {
+      router.push({ name: routeName })
+
+      isSidebarOpen.value = false
+    }
 
     const updateScreenWidth = () => {
       screenWidth.value = window.innerWidth
@@ -29,7 +63,16 @@ export default defineComponent({
       window.removeEventListener('resize', updateScreenWidth)
     })
 
-    return { menuItens, isSidebarOpen, username, hoveredItem, screenWidth }
+    return {
+      isSidebarOpen,
+      username,
+      hoveredItem,
+      screenWidth,
+      menuItensByGroup,
+      footerPopoverRef,
+      userMenuItems,
+      handleRedirect,
+    }
   },
 })
 </script>
@@ -65,15 +108,20 @@ export default defineComponent({
 
       <div class="border-gray-400 border-opacity-50 border-b-1 !mb-2" />
 
-      <div v-for="item in menuItens" :key="item.name">
+      <div v-for="(menuItem, index) in menuItensByGroup" :key="index">
+        <span v-if="isSidebarOpen" class="text-xs font-medium opacity-50 !ms-2">{{
+          menuItem[0].group
+        }}</span>
         <div
+          v-for="item in menuItem"
+          :key="item.name"
           :class="[
             'p-2 flex items-center h-8 cursor-pointer w-full relative',
             !isSidebarOpen ? '!justify-center' : '!justify-start',
           ]"
           @mouseover="hoveredItem = item.name"
           @mouseleave="hoveredItem = null"
-          @click="$router.push({ name: item.name })"
+          @click="handleRedirect(item.name)"
         >
           <i :class="[item.icon, 'text-lg']" />
 
@@ -88,14 +136,38 @@ export default defineComponent({
       <div class="border-gray-400 border-opacity-50 border-b-1 !mb-5" />
 
       <div class="footer">
-        <div :class="['flex items-center justify-center', !isSidebarOpen && 'w-full']">
-          <Avatar :label="username.charAt(0).toUpperCase()" shape="circle" />
-          <span v-if="isSidebarOpen" class="text-sm !ms-2">{{
+        <div :class="[' flex items-center justify-center', !isSidebarOpen && 'w-full']">
+          <SpeedDial
+            :model="userMenuItems"
+            direction="up"
+            :transitionDelay="80"
+            :pt="{
+              list: { class: `min-w-[100px] !absolute bottom-20 left-2 flex flex-row ` },
+              item: {
+                class: 'w-full',
+              },
+            }"
+          >
+            <template #button="{ toggleCallback }">
+              <Button outlined variant="text" class="border" @click="toggleCallback">
+                <Avatar :label="username.charAt(0).toUpperCase()" shape="circle" />
+              </Button>
+            </template>
+            <template #item="{ item, toggleCallback }">
+              <Button fluid @click="toggleCallback" size="small">
+                <span :class="item.icon" />
+                {{ item.label }}
+              </Button>
+            </template>
+          </SpeedDial>
+          <span v-if="isSidebarOpen" class="text-sm">{{
             username.charAt(0).toUpperCase() + username.slice(1)
           }}</span>
         </div>
 
-        <Button v-if="screenWidth < 550" @click="isSidebarOpen = !isSidebarOpen"> Sair </Button>
+        <Button v-if="screenWidth < 550" @click="isSidebarOpen = !isSidebarOpen">
+          Fechar Menu
+        </Button>
       </div>
     </template>
   </Card>
@@ -107,7 +179,7 @@ export default defineComponent({
 
 <style scoped>
 .sidebar {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   bottom: 0;

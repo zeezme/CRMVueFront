@@ -61,7 +61,7 @@ const handleSubmitLogin = async () => {
 </script>
 
 <template>
-  <main>
+  <main class="flex items-center justify-center h-[90vh]">
     <Card>
       <template #title>
         <div class="text-center">Login</div>

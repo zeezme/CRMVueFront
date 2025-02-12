@@ -35,7 +35,6 @@ router.beforeEach(async (to, from, next) => {
     method: 'POST',
     data: { token: token.value },
   })
-  console.log(isJwtValid)
 
   if (isJwtValid === false) {
     globalStore.resetState()

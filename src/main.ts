@@ -17,14 +17,24 @@ import { initializeGlobalStore } from './common/config/globalStore'
 
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
 import { HiSolidCursorClick } from 'oh-vue-icons/icons'
+import { BiCodeSquare } from 'oh-vue-icons/icons'
+
 import ConfirmationService from 'primevue/confirmationservice'
+
+import { createVCodeBlock } from '@wdns/vue-code-block'
+
+const VCodeBlock = createVCodeBlock({})
 
 const app = createApp(App)
 
+app.use(VCodeBlock)
 app.use(ConfirmationService)
 
 addIcons(HiSolidCursorClick)
+addIcons(BiCodeSquare)
+
 app.component('v-icon', OhVueIcon)
+app.component('VCodeBlock', VCodeBlock)
 
 const Dark = definePreset(lara, {
   semantic: {

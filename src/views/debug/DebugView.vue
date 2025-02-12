@@ -40,6 +40,7 @@ const personEntries = computed(() => {
 
 const globalEntries = computed(() => {
   const flattened = dottie.flatten(global.value)
+  console.log(flattened)
   return Object.entries(flattened).map(([key, value]) => ({
     key,
     value: Array.isArray(value)
@@ -70,11 +71,9 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <main
-    class="flex flex-col gap-5 w-full absolute top-0 p-10 md:static md:flex md:flex-row md:h-screen"
-  >
+  <main class="flex flex-col md:flex-row gap-5">
     <!-- Estado Global -->
-    <div class="flex flex-col gap-5 md:w-1/3">
+    <div class="flex flex-col md:w-2/4 gap-5">
       <Card>
         <template #title>
           <div class="text-center">Estado Global</div>
@@ -110,7 +109,7 @@ const handleLogout = () => {
     </div>
 
     <!-- Estado Pessoa -->
-    <div class="flex flex-col gap-5 md:w-1/3">
+    <div class="flex flex-col md:w-1/4 gap-5">
       <Card>
         <template #title>
           <div class="text-center">Estado Pessoa</div>
@@ -125,7 +124,7 @@ const handleLogout = () => {
     </div>
 
     <!-- Lista de Pessoas -->
-    <div class="flex flex-col gap-5 md:w-1/3">
+    <div class="flex flex-col md:w-1/4 gap-5">
       <Card>
         <template #title>
           <div class="text-center">Lista de Pessoas</div>
